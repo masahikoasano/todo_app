@@ -8,8 +8,8 @@ import (
 	"os"
 	"todo_app/config"
 
-	"github..com/lib/pq"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 var Db *sql.DB
