@@ -72,9 +72,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func authenticate(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
-	if err != nil {
-		log.Println(err)
-	}
 
 	user, err := models.GetUserByEmail(r.PostFormValue("email"))
 	if err != nil {

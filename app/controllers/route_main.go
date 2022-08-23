@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"todo_app/app/models"
@@ -68,10 +67,7 @@ func todoEdit(w http.ResponseWriter, r *http.Request, id int) {
 	if err != nil {
 		http.Redirect(w, r, "/login", 302)
 	} else {
-		err = r.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
+
 		_, err := sess.GetUserBySession()
 		if err != nil {
 			log.Println(err)
@@ -80,7 +76,6 @@ func todoEdit(w http.ResponseWriter, r *http.Request, id int) {
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(t)
 		generateHTML(w, t, "layout", "private_navbar", "todo_edit")
 	}
 }
@@ -112,10 +107,6 @@ func todoDelete(w http.ResponseWriter, r *http.Request, id int) {
 	if err != nil {
 		http.Redirect(w, r, "/login", 302)
 	} else {
-		err = r.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
 		_, err := sess.GetUserBySession()
 		if err != nil {
 			log.Println(err)
