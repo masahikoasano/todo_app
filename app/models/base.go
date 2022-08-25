@@ -27,9 +27,9 @@ const (
 func init() {
 
 	url := os.Getenv("DATABASE_URL")
-	conection, _ := pq.ParseURL(url)
-	conection += "sslmode=require"
-	Db, err = sql.Open(config.Config.SQLDriver, conection)
+	connection, _ := pq.ParseURL(url)
+	connection += "sslmode=require"
+	Db, err = sql.Open(config.Config.SQLDriver, connection)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -40,7 +40,7 @@ func init() {
 		}
 
 		cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s(
-			id INTEGER PRIMARY  KEY AUTOINCREMENT,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			uuid STRING NOT NULL UNIQUE,
 			name STRING,
 			email STRING,
@@ -50,7 +50,7 @@ func init() {
 		Db.Exec(cmdU)
 
 		cmdT := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s(
-			id INTEGER PRIMARY KEY  AUTOINCREMENT,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			content TEXT,
 			user_id INTEGER,
 			created_at DATETIME)`, tableNameTodo)
@@ -73,7 +73,7 @@ func createUUID() (uuidobj uuid.UUID) {
 	return uuidobj
 }
 
-func Encrypt(plaintext string) (crypext string) {
-	crypext = fmt.Sprintf("%x", sha1.Sum([]byte(plaintext)))
-	return crypext
+func Encrypt(plaintext string) (cryptext string) {
+	cryptext = fmt.Sprintf("%x", sha1.Sum([]byte(plaintext)))
+	return cryptext
 }

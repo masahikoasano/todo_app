@@ -3,12 +3,10 @@ package controllers
 import (
 	"log"
 	"net/http"
-
 	"todo_app/app/models"
 )
 
 func signup(w http.ResponseWriter, r *http.Request) {
-
 	if r.Method == "GET" {
 		_, err := session(w, r)
 		if err != nil {
@@ -23,10 +21,10 @@ func signup(w http.ResponseWriter, r *http.Request) {
 		}
 		user := models.User{
 			Name:     r.PostFormValue("name"),
-			Emall:    r.PostFormValue("email"),
+			Email:    r.PostFormValue("email"),
 			PassWord: r.PostFormValue("password"),
 		}
-		if err := user.CreatUser(); err != nil {
+		if err := user.CreateUser(); err != nil {
 			log.Println(err)
 		}
 
@@ -34,33 +32,6 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/*
-	switch r.Method {
-	case http.MethodGet:
-		_, err := session(w, r)
-		if err != nil {
-			generateHTML(w, nil, "layout", "public_navbar", "signup")
-		} else {
-			http.Redirect(w, r, "/todos", 302)
-		}
-	case http.MethodPost:
-		err := r.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
-		user := models.User{
-			Name:     r.PostFormValue("name"),
-			Emall:    r.ostFormValue("email"),
-			PassWord: r.PostFormValue("password"),
-		}
-		if err := user.CreatUser(); err != nil {
-			log.Println(err)
-		}
-
-		http.Redirect(w, r, "/", 302)
-	}
-}
-*/
 func login(w http.ResponseWriter, r *http.Request) {
 	_, err := session(w, r)
 	if err != nil {
@@ -70,9 +41,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func authenticate(w http.ResponseWriter, r *http.Request) {
+func auhtenticate(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
-
 	user, err := models.GetUserByEmail(r.PostFormValue("email"))
 	if err != nil {
 		log.Println(err)
@@ -83,12 +53,14 @@ func authenticate(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println(err)
 		}
+
 		cookie := http.Cookie{
 			Name:     "_cookie",
 			Value:    session.UUID,
 			HttpOnly: true,
 		}
 		http.SetCookie(w, &cookie)
+
 		http.Redirect(w, r, "/", 302)
 	} else {
 		http.Redirect(w, r, "/login", 302)

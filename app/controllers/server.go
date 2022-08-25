@@ -30,14 +30,14 @@ func session(w http.ResponseWriter, r *http.Request) (sess models.Session, err e
 		}
 	}
 	return sess, err
-
 }
 
-var validpath = regexp.MustCompile("^/todos/(edit|update|delete)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/todos/(edit|update|delete)/([0-9]+)$")
 
 func parseURL(fn func(http.ResponseWriter, *http.Request, int)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := validpath.FindStringSubmatch(r.URL.Path)
+		// /todos/edit/1
+		q := validPath.FindStringSubmatch(r.URL.Path)
 		if q == nil {
 			http.NotFound(w, r)
 			return
@@ -59,8 +59,8 @@ func StartMainServer() error {
 	http.HandleFunc("/", top)
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/login", login)
+	http.HandleFunc("/authenticate", auhtenticate)
 	http.HandleFunc("/logout", logout)
-	http.HandleFunc("/authenticate", authenticate)
 	http.HandleFunc("/todos", index)
 	http.HandleFunc("/todos/new", todoNew)
 	http.HandleFunc("/todos/save", todoSave)

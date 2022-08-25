@@ -6,24 +6,24 @@ import (
 )
 
 type User struct {
-	ID       int
-	UUID     string
-	Name     string
-	Emall    string
-	PassWord string
-	CreateAt time.Time
-	Todos    []Todo
+	ID        int
+	UUID      string
+	Name      string
+	Email     string
+	PassWord  string
+	CreatedAt time.Time
+	Todos     []Todo
 }
 
 type Session struct {
-	ID       int
-	UUID     string
-	Emall    string
-	UserID   int
-	CreateAt time.Time
+	ID        int
+	UUID      string
+	Email     string
+	UserID    int
+	CreatedAt time.Time
 }
 
-func (u *User) CreatUser() (err error) {
+func (u *User) CreateUser() (err error) {
 	cmd := `insert into users (
 		uuid,
 		name,
@@ -34,7 +34,7 @@ func (u *User) CreatUser() (err error) {
 	_, err = Db.Exec(cmd,
 		createUUID(),
 		u.Name,
-		u.Emall,
+		u.Email,
 		Encrypt(u.PassWord),
 		time.Now())
 
@@ -42,27 +42,26 @@ func (u *User) CreatUser() (err error) {
 		log.Fatalln(err)
 	}
 	return err
-
 }
 
 func GetUser(id int) (user User, err error) {
 	user = User{}
 	cmd := `select id, uuid, name, email, password, created_at
-	from  users where id = $1`
+	from users where id = $1`
 	err = Db.QueryRow(cmd, id).Scan(
 		&user.ID,
 		&user.UUID,
 		&user.Name,
-		&user.Emall,
+		&user.Email,
 		&user.PassWord,
-		&user.CreateAt,
+		&user.CreatedAt,
 	)
 	return user, err
 }
 
 func (u *User) UpdateUser() (err error) {
 	cmd := `update users set name = $1, email = $2 where id = $3`
-	_, err = Db.Exec(cmd, u.Name, u.Emall, u.ID)
+	_, err = Db.Exec(cmd, u.Name, u.Email, u.ID)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -74,10 +73,8 @@ func (u *User) DeleteUser() (err error) {
 	_, err = Db.Exec(cmd, u.ID)
 	if err != nil {
 		log.Fatalln(err)
-
 	}
 	return err
-
 }
 
 func GetUserByEmail(email string) (user User, err error) {
@@ -88,9 +85,9 @@ func GetUserByEmail(email string) (user User, err error) {
 		&user.ID,
 		&user.UUID,
 		&user.Name,
-		&user.Emall,
+		&user.Email,
 		&user.PassWord,
-		&user.CreateAt)
+		&user.CreatedAt)
 
 	return user, err
 }
@@ -103,34 +100,34 @@ func (u *User) CreateSession() (session Session, err error) {
 		user_id, 
 		created_at) values ($1, $2, $3, $4)`
 
-	_, err = Db.Exec(cmd1, createUUID(), u.Emall, u.ID, time.Now())
+	_, err = Db.Exec(cmd1, createUUID(), u.Email, u.ID, time.Now())
 	if err != nil {
 		log.Println(err)
 	}
 
 	cmd2 := `select id, uuid, email, user_id, created_at
-	from sessions where user_id = $1 and email = $2`
+	 from sessions where user_id = $1 and email = $2`
 
-	err = Db.QueryRow(cmd2, u.ID, u.Emall).Scan(
+	err = Db.QueryRow(cmd2, u.ID, u.Email).Scan(
 		&session.ID,
 		&session.UUID,
-		&session.Emall,
+		&session.Email,
 		&session.UserID,
-		&session.CreateAt)
+		&session.CreatedAt)
 
 	return session, err
 }
 
 func (sess *Session) CheckSession() (valid bool, err error) {
-	cmd := `select id , uuid, email, user_id, created_at
-	from sessions where uuid = $1`
+	cmd := `select id, uuid, email, user_id, created_at
+	 from sessions where uuid = $1`
 
 	err = Db.QueryRow(cmd, sess.UUID).Scan(
 		&sess.ID,
 		&sess.UUID,
-		&sess.Emall,
+		&sess.Email,
 		&sess.UserID,
-		&sess.CreateAt)
+		&sess.CreatedAt)
 
 	if err != nil {
 		valid = false
@@ -153,14 +150,14 @@ func (sess *Session) DeleteSessionByUUID() (err error) {
 
 func (sess *Session) GetUserBySession() (user User, err error) {
 	user = User{}
-	cmd := `select id, uuid, name, email, crreated_at FROM users
+	cmd := `select id, uuid, name, email, created_at FROM users
 	where id = $1`
 	err = Db.QueryRow(cmd, sess.UserID).Scan(
 		&user.ID,
 		&user.UUID,
 		&user.Name,
-		&user.Emall,
-		&user.CreateAt)
+		&user.Email,
+		&user.CreatedAt)
 
 	return user, err
 }
